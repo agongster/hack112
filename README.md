@@ -1,6 +1,5 @@
 # Average 112 Midterm
 
-Title: insert game title here
 By: Nicholas Chung, Aarav Jindal, April Gong
 
 * To start the program, run Final_MeatDragon.py
