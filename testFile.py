@@ -9,6 +9,8 @@ def onAppStart(app):
     app.stepsPerSecond = 25
     app.paused = False
     app.gravity = 2
+    app.lives=3
+    app.gameOver=False
 
 def onKeyPress(app, key):
     if key == 'space':
@@ -26,30 +28,46 @@ def launchFood(app): #add food data to app.foods
     t = (2*app.gravity + math.sqrt(4*app.gravity**2 + 32*h*app.gravity))/(2*app.gravity)
     vx = (x1-x0)/t
     vy = -0.5*app.gravity*t
-    app.foods.append((x0, 800, vx, vy))
+    colorList=['black','red','black','black','red','black','black']
+    color=colorList[random.randrange(len(colorList))]
+    app.foods.append((x0, 800, vx, vy,color))
 
 def onStep(app):
-    if not app.paused:
-        takeStep(app)
+    if not app.gameOver:
+        if not app.paused:
+            takeStep(app)
+            if app.lives<=0:
+                app.gameOver=True
 
 def takeStep(app):
-    for i in range(len(app.foods)):
-        (x, y, vx, vy) = app.foods[i]
-        x += vx
-        y += vy
-        vy += app.gravity
-        app.foods[i] = (x, y, vx, vy)
+    i=0
+    while i<len(app.foods):
+        (x, y, vx, vy,color) = app.foods[i]
+        if y>600 and (x<700) and (x>100):
+            app.foods.remove(app.foods[i])
+            if color=='black':
+                app.lives-=0.1
+        else:
+            x += vx
+            y += vy
+            vy += app.gravity
+            app.foods[i] = (x, y, vx, vy,color)
+            i+=1
+            
+        
 
         
 
 def redrawAll(app):
-
-    drawBalls(app)
+    if not app.gameOver:
+        drawBalls(app)
+    else:
+        drawLabel("Game Over",200,200,size=32,fill='red')
     
     
 def drawBalls(app):
-    for (x, y, vx, vy) in app.foods:
-        drawCircle(x, y, 50, border = 'pink', borderWidth = 10, fill = None)
+    for (x, y, vx, vy,color) in app.foods:
+        drawCircle(x, y, 50, border = color, borderWidth = 10, fill = None)
     
 def onMousePress(app, mouseX, mouseY):
     print(mouseX, mouseY)
