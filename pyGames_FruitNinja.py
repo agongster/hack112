@@ -2,6 +2,7 @@ import pygame
 import random
 import os
 import math
+import time
 
 level = 0
 mouthWidth = 200
@@ -22,6 +23,8 @@ heart=pygame.image.load(os.path.join('opencvApp','heart.png'))
 dragon=pygame.image.load(os.path.join('opencvApp','dragon.png'))
 pat=pygame.image.load(os.path.join('opencvApp', 'pat_virtue.png'))
 mike=pygame.image.load(os.path.join('opencvApp', 'mike_taylor.png'))
+gates = pygame.image.load(os.path.join('opencvApp', 'gates.jpeg')).convert()
+gates.set_alpha(200)
 
 poison = pygame.transform.scale(poison,(100,100))
 meat = pygame.transform.scale(meat,(100,100))
@@ -29,6 +32,7 @@ heart = pygame.transform.scale(heart,(50,50))
 dragon = pygame.transform.scale(dragon,(600,200))
 pat = pygame.transform.scale(pat, (175,175))
 mike = pygame.transform.scale(mike, (100,100))
+gates = pygame.transform.scale(gates, (800,800))
 
 def restart():
     global foods
@@ -70,10 +74,11 @@ def launchFood(): #add food data to foods
 def redrawAll(life):
     print(life)
     WIN.fill((255, 255, 255))
+    WIN.blit(gates,(0,0))
+    WIN.blit(dragon,(100,600))
     drawBalls()
     for i in range(life):
         WIN.blit(heart,(25*(i+1),25))
-    WIN.blit(dragon,(100,600))
     pygame.display.update()
 
 def main():
@@ -83,6 +88,7 @@ def main():
     life = 10
     clock = pygame.time.Clock()
     run = True
+    startTime = time.time()
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -94,7 +100,6 @@ def main():
             life=10
             restart()
             gameOver = False
-            # redrawAll(life)
 
         if gameOver==False:
             
@@ -107,6 +112,8 @@ def main():
                 life=result
             if life<=0:
                 gameOver=True
+                endTime = time.Time()
+                elapsedTime = endTime - startTime
             counter+=1
         redrawAll(life)
 
