@@ -6,11 +6,14 @@ def onAppStart(app):
     app.level = 0
     app.mouthWidth = 200
     app.foods = []
-    app.stepsPerSecond = 25
+    app.stepsPerSecond = 20
     app.paused = False
     app.gravity = 2
-    app.lives=3
+    app.lives=10
     app.gameOver=False
+    app.counter=0
+    app.speed=50
+
 
 def onKeyPress(app, key):
     if key == 'space':
@@ -28,25 +31,29 @@ def launchFood(app): #add food data to app.foods
     t = (2*app.gravity + math.sqrt(4*app.gravity**2 + 32*h*app.gravity))/(2*app.gravity)
     vx = (x1-x0)/t
     vy = -0.5*app.gravity*t
-    colorList=['black','red','black','black','red','black','black']
+    colorList=['black','black','black','black','red','red','black']
     color=colorList[random.randrange(len(colorList))]
     app.foods.append((x0, 800, vx, vy,color))
 
 def onStep(app):
     if not app.gameOver:
         if not app.paused:
+            if app.counter%app.speed==0: 
+                launchFood(app)
+            if app.counter/750==0 and app.speed>5:
+                app.speed/=2
             takeStep(app)
             if app.lives<=0:
                 app.gameOver=True
-
+            app.counter+=1
 def takeStep(app):
     i=0
     while i<len(app.foods):
         (x, y, vx, vy,color) = app.foods[i]
-        if y>600 and (x<700) and (x>100):
+        if y>600 and (x<650) and (x>150):
             app.foods.remove(app.foods[i])
             if color=='black':
-                app.lives-=0.1
+                app.lives-=1
         else:
             x += vx
             y += vy
@@ -61,6 +68,8 @@ def takeStep(app):
 def redrawAll(app):
     if not app.gameOver:
         drawBalls(app)
+        for i in range (app.lives):
+            drawPolygon((30*i)+100/4,70/4,(30*i)+75/4,50/4,(30*i)+45/4,80/4,(30*i)+100/4,150/4,(30*i)+155/4,80/4,(30*i)+125/4,50/4,fill='red',border='black')
     else:
         drawLabel("Game Over",200,200,size=32,fill='red')
     
